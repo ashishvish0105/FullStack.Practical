@@ -1,0 +1,55 @@
+import { Component, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, FormArray, Validators } from '@angular/forms';
+
+@Component({
+  selector: 'my-app',
+  templateUrl: './app.component.html',
+  styleUrls: ['./app.component.css']
+})
+export class AppComponent {
+  studentForm!: FormGroup;
+
+  constructor(private fb: FormBuilder) {}
+
+  ngOnInit(): void {
+    this.studentForm = this.fb.group({
+      students: this.fb.array([this.createStudentGroup()])
+    });
+  }
+
+  createStudentGroup(): FormGroup {
+    return this.fb.group({
+      // Name is required and must be at least 3 characters
+      name: ['', [Validators.required, Validators.minLength(3)]],
+      // Email is required and must match a proper email format
+      email: ['', [Validators.required, Validators.email]],
+      // Age is required, must be a number, and minimum 5 years old
+      age: ['', [Validators.required, Validators.min(5), Validators.max(100)]]
+    });
+  }
+
+  get studentsArray(): FormArray {
+    return this.studentForm.get('students') as FormArray;
+  }
+
+  addStudent(): void {
+    // Only push if the entire form is currently valid
+    if (this.studentForm.valid) {
+      this.studentsArray.push(this.createStudentGroup());
+    }
+  }
+
+  removeStudent(index: number): void {
+    this.studentsArray.removeAt(index);
+  }
+
+  onSubmit(): void {
+    if (this.studentForm.valid) {
+      console.log('Submitted Data:', this.studentForm.value);
+    } else {
+      this.studentForm.markAsTouched(); // Force display errors if invalid submission occurs
+    }
+  }
+}
+
+

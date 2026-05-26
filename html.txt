@@ -1,0 +1,95 @@
+<form [formGroup]="studentForm" (ngSubmit)="onSubmit()">
+  <div formArrayName="students">
+    <div
+      *ngFor="let student of studentsArray.controls; let i = index"
+      [formGroupName]="i"
+      class="student-box"
+    >
+      <h3>Student Details #{{ i + 1 }}</h3>
+
+      <!-- Name Field -->
+      <div>
+        <label>Name:</label>
+        <input type="text" formControlName="name" />
+        <span
+          *ngIf="
+            student.get('name') &&
+            student.get('name').invalid &&
+            student.get('name').touched
+          "
+          class="error-msg"
+        >
+          <small *ngIf="student.get('name').hasError('required')"
+            >Name is required.</small
+          >
+          <small *ngIf="student.get('name').hasError('minlength')"
+            >Minimum 3 characters required.</small
+          >
+        </span>
+      </div>
+
+      <!-- Email Field -->
+      <div>
+        <label>Email:</label>
+        <input type="email" formControlName="email" />
+        <span
+          *ngIf="
+            student.get('email') &&
+            student.get('email').invalid &&
+            student.get('email').touched
+          "
+          class="error-msg"
+        >
+          <small *ngIf="student.get('email').hasError('required')"
+            >Email is required.</small
+          >
+          <small *ngIf="student.get('email').hasError('email')"
+            >Enter a valid email address.</small
+          >
+        </span>
+      </div>
+
+      <!-- Age Field -->
+      <div>
+        <label>Age:</label>
+        <input type="number" formControlName="age" />
+        <span
+          *ngIf="
+            student.get('age') &&
+            student.get('age').invalid &&
+            student.get('age').touched
+          "
+          class="error-msg"
+        >
+          <small *ngIf="student.get('age').hasError('required')"
+            >Age is required.</small
+          >
+          <small *ngIf="student.get('age').hasError('min')"
+            >Age must be at least 5.</small
+          >
+          <small *ngIf="student.get('age').hasError('max')"
+            >Age cannot exceed 100.</small
+          >
+        </span>
+      </div>
+
+      <button
+        type="button"
+        *ngIf="studentsArray.length > 1"
+        (click)="removeStudent(i)"
+        class="remove-btn"
+      >
+        Remove This Student
+      </button>
+      <hr />
+    </div>
+  </div>
+
+  <button type="button" (click)="addStudent()" [disabled]="studentForm.invalid">
+    + Add Another Student
+  </button>
+
+  <button type="submit" [disabled]="studentForm.invalid" class="submit-btn">
+    Submit Registration
+  </button>
+</form>
