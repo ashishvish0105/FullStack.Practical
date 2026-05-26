@@ -1,0 +1,6 @@
+@FullStack_HostAddress = http://localhost:5264
+
+GET {{FullStack_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
