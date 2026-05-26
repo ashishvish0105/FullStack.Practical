@@ -1,4 +1,4 @@
-﻿namespace FullStack.Models
+﻿namespace FullStack.Core.Comman
 {
     public class ApiCommanModel
     {
@@ -9,16 +9,16 @@
 
         public ApiCommanModel()
         {
-            this.statusCode = StatusCodes.Status400BadRequest;
-            this.payload = null;
+            statusCode = StatusCodes.Status400BadRequest;
+            payload = null;
             requestId = Guid.NewGuid();
             messgae = "Bad request";
         }
 
         public ApiCommanModel(string message)
         {
-            this.statusCode = StatusCodes.Status400BadRequest;
-            this.payload = null;
+            statusCode = StatusCodes.Status400BadRequest;
+            payload = null;
             requestId = Guid.NewGuid();
             messgae = message;
         }

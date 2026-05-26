@@ -1,3 +1,4 @@
+using FullStack.Core.Iterface;
 using FullStack.Repository.Product;
 
 var builder = WebApplication.CreateBuilder(args);

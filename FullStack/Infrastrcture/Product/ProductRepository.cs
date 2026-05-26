@@ -1,6 +1,9 @@
-﻿using FullStack.Models;
+﻿using FullStack.Core.Entity;
+using FullStack.Core.Iterface;
 using Microsoft.AspNetCore.Connections;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
+using Microsoft.Extensions.Configuration;
 using System.Data;
 using System.Xml.Linq;
 
@@ -93,6 +96,56 @@ namespace FullStack.Repository.Product
 
             return await cmd.ExecuteNonQueryAsync();
         }
+
+        public async Task<PaginationResponse<ProductModel>> GetProducts(
+        int pageNumber = 1,
+        int pageSize = 10,
+        string? search = null)
+        {
+            var response = new PaginationResponse<ProductModel>();
+
+            string connectionString = config.GetConnectionString("defaultConnectionStrings");
+
+            using SqlConnection con = new SqlConnection(connectionString);
+
+            using SqlCommand cmd = new SqlCommand("sp_GetProducts", con);
+
+            cmd.CommandType = CommandType.StoredProcedure;
+
+            cmd.Parameters.AddWithValue("@PageNumber", pageNumber);
+            cmd.Parameters.AddWithValue("@PageSize", pageSize);
+
+            if (string.IsNullOrWhiteSpace(search))
+                cmd.Parameters.AddWithValue("@Search", DBNull.Value);
+            else
+                cmd.Parameters.AddWithValue("@Search", search);
+
+            await con.OpenAsync();
+
+            using SqlDataReader dr = await cmd.ExecuteReaderAsync();
+
+            // First ResultSet -> Product List
+            while (await dr.ReadAsync())
+            {
+                response.Data.Add(MapProduct(dr));
+            }
+
+            // Second ResultSet -> Total Count
+            if (await dr.NextResultAsync())
+            {
+                if (await dr.ReadAsync())
+                {
+                    response.TotalRecords =
+                        Convert.ToInt32(dr["TotalRecords"]);
+                }
+            }
+
+            response.PageNumber = pageNumber;
+            response.PageSize = pageSize;
+
+            return response;
+        }
+
 
         //public async Task<List<ProductModel>> getProductList()
         //{

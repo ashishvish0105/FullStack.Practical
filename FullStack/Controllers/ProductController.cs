@@ -1,6 +1,11 @@
-﻿using FullStack.Models;
-using FullStack.Repository.Product;
+﻿using FullStack.Core.Comman;
+using FullStack.Core.Entity;
+using FullStack.Core.Iterface;
+using FullStack.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Data.SqlClient;
+using Microsoft.Extensions.Configuration;
+using System.Data;
 
 [ApiController]
 [Route("api/products")]
@@ -56,6 +61,21 @@ public class ProductController : ControllerBase
             payload = product,
             messgae = "Created successfully",
             statusCode = StatusCodes.Status201Created
+        });
+    }
+
+    [HttpGet("GetProducts")]
+    public async Task<IActionResult> GetProducts(
+      int pageNumber = 1,
+      int pageSize = 10,
+      string? search = null)
+    {
+        var result = await productRepository.GetProducts(pageNumber, pageSize, search);
+        return Ok(new ApiCommanModel
+        {
+            payload = result,
+            messgae = "Success",
+            statusCode = StatusCodes.Status200OK
         });
     }
 }
