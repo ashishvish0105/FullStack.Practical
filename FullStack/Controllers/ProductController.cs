@@ -1,11 +1,8 @@
 ﻿using FullStack.Core.Comman;
 using FullStack.Core.Entity;
 using FullStack.Core.Iterface;
-using FullStack.Models;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Data.SqlClient;
-using Microsoft.Extensions.Configuration;
-using System.Data;
+
 
 [ApiController]
 [Route("api/products")]
@@ -19,53 +16,62 @@ public class ProductController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetAll()
+    public async Task<ActionResult<ApiCommanModel>> GetAll()
     {
         var products = await productRepository.getProductList();
+
+        if (products == null || !products.Any())
+        {
+            return NotFound(new ApiCommanModel
+            {
+                message = "No products found",
+                statusCode = StatusCodes.Status404NotFound
+            });
+        }
 
         return Ok(new ApiCommanModel
         {
             payload = products,
-            messgae = "Success",
+            message = "Success",
             statusCode = StatusCodes.Status200OK
         });
     }
 
     [HttpGet("{id}")]
-    public async Task<IActionResult> GetById(int id)
+    public async Task<ActionResult<ApiCommanModel>> GetById(int id)
     {
         var product = await productRepository.getProductById(id);
 
         if (product == null)
             return NotFound(new ApiCommanModel
             {
-                messgae = "Product not found",
+                message = "Product not found",
                 statusCode = StatusCodes.Status404NotFound
             });
 
         return Ok(new ApiCommanModel
         {
             payload = product,
-            messgae = "Success",
+            message = "Success",
             statusCode = StatusCodes.Status200OK
         });
     }
 
     [HttpPost]
-    public async Task<IActionResult> Create(ProductModel product)
+    public async Task<ActionResult<ApiCommanModel>> Create(ProductModel product)
     {
         var result = await productRepository.addEditProduct(product);
 
         return Ok(new ApiCommanModel
         {
             payload = product,
-            messgae = "Created successfully",
+            message = "Created successfully",
             statusCode = StatusCodes.Status201Created
         });
     }
 
     [HttpGet("GetProducts")]
-    public async Task<IActionResult> GetProducts(
+    public async Task<ActionResult<ApiCommanModel>> GetProducts(
       int pageNumber = 1,
       int pageSize = 10,
       string? search = null)
@@ -74,7 +80,7 @@ public class ProductController : ControllerBase
         return Ok(new ApiCommanModel
         {
             payload = result,
-            messgae = "Success",
+            message = "Success",
             statusCode = StatusCodes.Status200OK
         });
     }

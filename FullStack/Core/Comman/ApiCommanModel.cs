@@ -3,7 +3,7 @@
     public class ApiCommanModel
     {
         public int statusCode{ get; set; }
-        public string messgae { get; set; }
+        public string message { get; set; }
         public dynamic payload{ get; set; }
         public Guid requestId { get; set; }
 
@@ -12,7 +12,7 @@
             statusCode = StatusCodes.Status400BadRequest;
             payload = null;
             requestId = Guid.NewGuid();
-            messgae = "Bad request";
+            message = "Bad request";
         }
 
         public ApiCommanModel(string message)
@@ -20,7 +20,7 @@
             statusCode = StatusCodes.Status400BadRequest;
             payload = null;
             requestId = Guid.NewGuid();
-            messgae = message;
+            message = message;
         }
 
         public static ApiCommanModel apiRespons(int statusCode,string message, dynamic payload)
@@ -29,7 +29,7 @@
             {
                 statusCode = statusCode,
                 payload = payload,
-                messgae = message,
+                message = message,
                 requestId = Guid.NewGuid()
             };
         }
